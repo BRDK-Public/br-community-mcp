@@ -162,7 +162,3 @@ Add one of these configurations to `.vscode/mcp.json` in your workspace:
   }
 }
 ```
-
-## License
-
-MIT
