@@ -35,12 +35,6 @@ uv run mcp dev server.py
 uv run python server.py
 ```
 
-### Install to Claude Desktop
-
-```bash
-uv run mcp install server.py
-```
-
 ## Available Tools
 
 ### `search_community`
@@ -79,13 +73,13 @@ Get the most popular topics.
 **Parameters:**
 - `period` (optional): One of "daily", "weekly", "monthly", "quarterly", "yearly", "all"
 
-## Configuration for Claude Desktop
+## Configuration for GitHub Copilot
 
-Add to your Claude Desktop configuration (`claude_desktop_config.json`):
+Add to your GitHub Copilot configuration:
 
 ```json
 {
-  "mcpServers": {
+  "servers": {
     "br-community": {
       "command": "uv",
       "args": ["run", "--directory", "/path/to/br-community-mcp", "python", "server.py"]

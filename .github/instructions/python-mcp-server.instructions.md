@@ -28,7 +28,7 @@ applyTo: "**/*.py, **/pyproject.toml, **/requirements.txt"
 - Access lifespan context in tools via `ctx.request_context.lifespan_context`
 - For stateless HTTP servers, set `stateless_http=True` in FastMCP initialization
 - Enable JSON responses for modern clients: `json_response=True`
-- Test servers with: `uv run mcp dev server.py` (Inspector) or `uv run mcp install server.py` (Claude Desktop)
+- Test servers with: `uv run mcp dev server.py` (Inspector)
 - Mount multiple servers in Starlette with different paths: `Mount("/path", mcp.streamable_http_app())`
 - Configure CORS for browser clients: expose `Mcp-Session-Id` header
 - Use low-level Server class for maximum control when FastMCP isn't sufficient
