@@ -1,13 +1,32 @@
 {
   "servers": {
-    "br-community": {
+    // Option 1: UV (local development)
+    "br-community-uv": {
       "command": "uv",
       "args": [
         "run",
         "--directory",
-        "c:\\Users\\poulsena\\projects\\br-community-mcp",
+        "${workspaceFolder}",
         "python",
-        "server.py"
+        "src/server.py"
+      ]
+    },
+    // Option 2: Docker Compose (local build)
+    "br-community-local": {
+      "command": "docker",
+      "args": [
+        "compose",
+        "-f", "${workspaceFolder}/docker-compose.yml",
+        "run", "--rm", "-T",
+        "br-community-local"
+      ]
+    },
+    // Option 3: Docker (production image from GitHub Container Registry)
+    "br-community-prod": {
+      "command": "docker",
+      "args": [
+        "run", "--rm", "-i",
+        "ghcr.io/brdk-github/br-community-mcp:latest"
       ]
     }
   }

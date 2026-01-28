@@ -10,30 +10,87 @@ An MCP (Model Context Protocol) server that provides tools to search and retriev
 - **Latest Topics** - Get the most recent discussions
 - **Top Topics** - Get popular topics by time period
 
-## Installation
+## Prerequisites
+
+- Docker Desktop installed and running (for Docker option)
+- Python 3.14+ and uv (for UV option)
+- VS Code with GitHub Copilot extension
+
+## Quick Start (VS Code)
+
+Add to `.vscode/mcp.json` in your workspace:
+
+### Option 1: Docker (Recommended)
+
+```json
+{
+  "servers": {
+    "br-community": {
+      "command": "docker",
+      "args": [
+        "run", "--rm", "-i",
+        "ghcr.io/brdk-github/br-community-mcp:latest"
+      ]
+    }
+  }
+}
+```
+
+### Option 2: UV (Local Development)
+
+```json
+{
+  "servers": {
+    "br-community": {
+      "command": "uv",
+      "args": ["run", "--directory", "/path/to/br-community-mcp", "python", "src/server.py"]
+    }
+  }
+}
+```
+
+Restart VS Code, then test in Copilot Chat: *"Search the B&R community for mappView"*
+
+---
+
+## Local Development Setup
+
+### Option 1: UV (Recommended for development)
 
 ```bash
-# Clone the repository
+# Clone and install
 git clone <repository-url>
 cd br-community-mcp
+uv sync --extra test --extra dev
 
-# Install dependencies with uv
-uv sync
+# Run server
+uv run python src/server.py
 ```
 
-## Usage
-
-### Run with MCP Inspector (Development)
+### Option 2: Docker Compose
 
 ```bash
-uv run mcp dev server.py
+# Local build
+docker compose build
+
+# Run the server
+docker compose run --rm br-community-local
 ```
 
-### Run directly (stdio transport)
+### Testing with MCP Inspector
+
+The MCP Inspector provides a web UI for testing tools and prompts:
 
 ```bash
-uv run python server.py
+# With UV
+uv run mcp dev src/server.py
+
+# Opens browser at http://localhost:5173
 ```
+
+Note: On Windows, use VS Code's Run and Debug panel instead (stdio transport issues with Inspector).
+
+---
 
 ## Available Tools
 
@@ -75,14 +132,32 @@ Get the most popular topics.
 
 ## Configuration for GitHub Copilot
 
-Add to your GitHub Copilot configuration:
+Add one of these configurations to `.vscode/mcp.json` in your workspace:
+
+### Docker (Production)
+
+```json
+{
+  "servers": {
+    "br-community": {
+      "command": "docker",
+      "args": [
+        "run", "--rm", "-i",
+        "ghcr.io/brdk-github/br-community-mcp:latest"
+      ]
+    }
+  }
+}
+```
+
+### UV (Development)
 
 ```json
 {
   "servers": {
     "br-community": {
       "command": "uv",
-      "args": ["run", "--directory", "/path/to/br-community-mcp", "python", "server.py"]
+      "args": ["run", "--directory", "/path/to/br-community-mcp", "python", "src/server.py"]
     }
   }
 }

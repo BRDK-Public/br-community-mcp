@@ -1,0 +1,11 @@
+services:
+  # Local development - builds from Dockerfile
+  br-community-local:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: br-community-mcp-server-local
+    restart: unless-stopped
+    
+    stdin_open: true
+    tty: true
