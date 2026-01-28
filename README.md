@@ -16,6 +16,10 @@ An MCP (Model Context Protocol) server that provides tools to search and retriev
 - Python 3.14+ and uv (for UV option)
 - VS Code with GitHub Copilot extension
 
+## Demo
+
+https://github.com/user-attachments/assets/14474af7-bc01-49b2-8d24-bdc8c1f0f38c
+
 ## Quick Start (VS Code)
 
 Add to `.vscode/mcp.json` in your workspace:
