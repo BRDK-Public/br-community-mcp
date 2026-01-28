@@ -163,6 +163,6 @@ Add one of these configurations to `.vscode/mcp.json` in your workspace:
 }
 ```
 
-## License
+## Contributing
 
-MIT
+Interested in contributing? Please read our [Contributing Guidelines](CONTRIBUTING.md) for information about our development setup, coding standards, testing requirements, and how to submit pull requests.
