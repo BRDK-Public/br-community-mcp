@@ -5,9 +5,11 @@ An MCP server for searching and retrieving information from the B&R Automation
 community forum (https://community.br-automation.com).
 """
 
+import os
 from typing import Optional
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 
 from src.models import (
     Category,
@@ -302,7 +304,12 @@ async def get_top_topics(
 
 def main() -> None:
     """Run the MCP server."""
-    mcp.run()
+    transport = os.environ.get("MCP_TRANSPORT", "stdio")
+    if transport == "streamable-http":
+        mcp.settings.host = os.environ.get("MCP_HOST", "0.0.0.0")
+        mcp.settings.port = int(os.environ.get("MCP_PORT", "8000"))
+        mcp.settings.transport_security = TransportSecuritySettings(enable_dns_rebinding_protection=False)
+    mcp.run(transport=transport)
 
 
 if __name__ == "__main__":

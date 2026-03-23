@@ -25,7 +25,10 @@ COPY --from=builder /app/src /app/src
 # Set Python path to use venv
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONPATH="/app/src:$PYTHONPATH" \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    MCP_TRANSPORT=stdio \
+    MCP_HOST=0.0.0.0 \
+    MCP_PORT=8000
 
 # Expose port for SSE mode (optional)
 EXPOSE 8000
