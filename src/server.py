@@ -139,6 +139,10 @@ async def get_topic(topic_id: int, max_posts: int = 10) -> TopicDetails:
         except Exception:
             pass  # Category lookup is optional
 
+    # Normalize tags: newer Discourse versions return objects with id/name/slug
+    raw_tags = data.get("tags", [])
+    tags = [t["name"] if isinstance(t, dict) else t for t in raw_tags]
+
     return TopicDetails(
         id=data["id"],
         title=data.get("title", ""),
@@ -150,7 +154,7 @@ async def get_topic(topic_id: int, max_posts: int = 10) -> TopicDetails:
         like_count=data.get("like_count", 0),
         has_accepted_answer=data.get("has_accepted_answer", False),
         category_name=category_name,
-        tags=data.get("tags", []),
+        tags=tags,
         posts=posts,
     )
 
