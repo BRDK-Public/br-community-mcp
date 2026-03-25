@@ -182,6 +182,53 @@ async def test_get_topic_max_posts() -> None:
 
 @respx.mock
 @pytest.mark.asyncio
+async def test_get_topic_handles_object_tags() -> None:
+    """Test get_topic normalizes tag objects from newer Discourse versions."""
+    mock_topic_response = {
+        "id": 456,
+        "title": "Topic With Object Tags",
+        "slug": "topic-with-object-tags",
+        "created_at": "2024-06-01T08:00:00Z",
+        "posts_count": 1,
+        "views": 10,
+        "like_count": 0,
+        "has_accepted_answer": False,
+        "tags": [
+            {"id": 179, "name": "as6-conversion-tool", "slug": "as6-conversion-tool"},
+            {"id": 180, "name": "as6-migration-script", "slug": "as6-migration-script"},
+            {"id": 142, "name": "automation-studio-6", "slug": "automation-studio-6"},
+        ],
+        "post_stream": {
+            "posts": [
+                {
+                    "id": 1,
+                    "post_number": 1,
+                    "username": "author",
+                    "created_at": "2024-06-01T08:00:00Z",
+                    "cooked": "<p>Content</p>",
+                }
+            ]
+        },
+    }
+
+    respx.get(f"{BASE_URL}/t/456.json").mock(
+        return_value=Response(200, json=mock_topic_response)
+    )
+    respx.get(f"{BASE_URL}/categories.json").mock(
+        return_value=Response(200, json={"category_list": {"categories": []}})
+    )
+
+    result = await get_topic(456)
+
+    assert result.tags == [
+        "as6-conversion-tool",
+        "as6-migration-script",
+        "automation-studio-6",
+    ]
+
+
+@respx.mock
+@pytest.mark.asyncio
 async def test_list_categories() -> None:
     """Test list_categories returns all categories."""
     mock_response = {
