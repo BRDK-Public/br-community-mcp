@@ -298,14 +298,22 @@ async def test_get_latest_topics() -> None:
                 },
             ]
         },
-        "categories": [
-            {"id": 1, "name": "Ask Questions"},
-            {"id": 2, "name": "Share Knowledge"},
-        ],
+    }
+
+    mock_categories_response = {
+        "category_list": {
+            "categories": [
+                {"id": 1, "name": "Ask Questions"},
+                {"id": 2, "name": "Share Knowledge"},
+            ]
+        }
     }
 
     respx.get(f"{BASE_URL}/latest.json").mock(
         return_value=Response(200, json=mock_response)
+    )
+    respx.get(f"{BASE_URL}/categories.json").mock(
+        return_value=Response(200, json=mock_categories_response)
     )
 
     result = await get_latest_topics()
@@ -319,10 +327,15 @@ async def test_get_latest_topics() -> None:
 @pytest.mark.asyncio
 async def test_get_latest_topics_with_category() -> None:
     """Test get_latest_topics with category filter."""
-    mock_response = {"topic_list": {"topics": []}, "categories": []}
+    mock_response = {"topic_list": {"topics": []}}
 
-    route = respx.get(f"{BASE_URL}/c/ask-questions.json").mock(
-        return_value=Response(200, json=mock_response)
+    route = respx.get(
+        f"{BASE_URL}/latest.json", params={"category": "ask-questions"}
+    ).mock(return_value=Response(200, json=mock_response))
+    respx.get(f"{BASE_URL}/categories.json").mock(
+        return_value=Response(
+            200, json={"category_list": {"categories": []}}
+        )
     )
 
     await get_latest_topics(category="ask-questions")
@@ -350,11 +363,20 @@ async def test_get_top_topics() -> None:
                 }
             ]
         },
-        "categories": [{"id": 1, "name": "Ask Questions"}],
     }
 
-    respx.get(f"{BASE_URL}/top/monthly.json").mock(
+    respx.get(f"{BASE_URL}/top.json", params={"period": "monthly"}).mock(
         return_value=Response(200, json=mock_response)
+    )
+    respx.get(f"{BASE_URL}/categories.json").mock(
+        return_value=Response(
+            200,
+            json={
+                "category_list": {
+                    "categories": [{"id": 1, "name": "Ask Questions"}]
+                }
+            },
+        )
     )
 
     result = await get_top_topics()
@@ -368,10 +390,15 @@ async def test_get_top_topics() -> None:
 @pytest.mark.asyncio
 async def test_get_top_topics_with_period() -> None:
     """Test get_top_topics with different period."""
-    mock_response = {"topic_list": {"topics": []}, "categories": []}
+    mock_response = {"topic_list": {"topics": []}}
 
-    route = respx.get(f"{BASE_URL}/top/yearly.json").mock(
+    route = respx.get(f"{BASE_URL}/top.json", params={"period": "yearly"}).mock(
         return_value=Response(200, json=mock_response)
+    )
+    respx.get(f"{BASE_URL}/categories.json").mock(
+        return_value=Response(
+            200, json={"category_list": {"categories": []}}
+        )
     )
 
     await get_top_topics(period="yearly")
@@ -383,10 +410,15 @@ async def test_get_top_topics_with_period() -> None:
 @pytest.mark.asyncio
 async def test_get_top_topics_invalid_period() -> None:
     """Test get_top_topics falls back to monthly for invalid period."""
-    mock_response = {"topic_list": {"topics": []}, "categories": []}
+    mock_response = {"topic_list": {"topics": []}}
 
-    route = respx.get(f"{BASE_URL}/top/monthly.json").mock(
+    route = respx.get(f"{BASE_URL}/top.json", params={"period": "monthly"}).mock(
         return_value=Response(200, json=mock_response)
+    )
+    respx.get(f"{BASE_URL}/categories.json").mock(
+        return_value=Response(
+            200, json={"category_list": {"categories": []}}
+        )
     )
 
     await get_top_topics(period="invalid")

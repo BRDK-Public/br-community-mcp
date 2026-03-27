@@ -19,7 +19,7 @@ from src.models import (
     TopicDetails,
     TopicPost,
 )
-from src.utils import BASE_URL, make_request, strip_html
+from src.utils import BASE_URL, fetch_category_map, make_request, strip_html
 
 # Initialize the MCP server
 mcp = FastMCP(
@@ -131,11 +131,8 @@ async def get_topic(topic_id: int, max_posts: int = 10) -> TopicDetails:
     category_name = ""
     if category_id:
         try:
-            cat_data = await make_request("/categories.json")
-            for cat in cat_data.get("category_list", {}).get("categories", []):
-                if cat["id"] == category_id:
-                    category_name = cat["name"]
-                    break
+            cat_map = await fetch_category_map()
+            category_name = cat_map.get(category_id, "")
         except Exception:
             pass  # Category lookup is optional
 
@@ -214,18 +211,18 @@ async def get_latest_topics(
     Returns:
         LatestTopics containing the most recent discussions
     """
+    params: dict = {}
     if category:
-        endpoint = f"/c/{category}.json"
-    else:
-        endpoint = "/latest.json"
+        params["category"] = category
+    if page > 0:
+        params["page"] = page
+    data = await make_request("/latest.json", params or None)
 
-    params = {"page": page} if page > 0 else None
-    data = await make_request(endpoint, params)
-
-    # Build category ID to name mapping
-    cat_map: dict[int, str] = {}
-    for cat in data.get("categories", []):
-        cat_map[cat["id"]] = cat["name"]
+    # Fetch category names from the categories API
+    try:
+        cat_map = await fetch_category_map()
+    except Exception:
+        cat_map = {}
 
     topics = []
     topic_list = data.get("topic_list", {}).get("topics", [])
@@ -269,13 +266,13 @@ async def get_top_topics(
     if period not in valid_periods:
         period = "monthly"
 
-    endpoint = f"/top/{period}.json"
-    data = await make_request(endpoint)
+    data = await make_request("/top.json", params={"period": period})
 
-    # Build category ID to name mapping
-    cat_map: dict[int, str] = {}
-    for cat in data.get("categories", []):
-        cat_map[cat["id"]] = cat["name"]
+    # Fetch category names from the categories API
+    try:
+        cat_map = await fetch_category_map()
+    except Exception:
+        cat_map = {}
 
     topics = []
     topic_list = data.get("topic_list", {}).get("topics", [])
