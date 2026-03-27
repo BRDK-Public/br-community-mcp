@@ -333,9 +333,7 @@ async def test_get_latest_topics_with_category() -> None:
         f"{BASE_URL}/latest.json", params={"category": "ask-questions"}
     ).mock(return_value=Response(200, json=mock_response))
     respx.get(f"{BASE_URL}/categories.json").mock(
-        return_value=Response(
-            200, json={"category_list": {"categories": []}}
-        )
+        return_value=Response(200, json={"category_list": {"categories": []}})
     )
 
     await get_latest_topics(category="ask-questions")
@@ -372,9 +370,7 @@ async def test_get_top_topics() -> None:
         return_value=Response(
             200,
             json={
-                "category_list": {
-                    "categories": [{"id": 1, "name": "Ask Questions"}]
-                }
+                "category_list": {"categories": [{"id": 1, "name": "Ask Questions"}]}
             },
         )
     )
@@ -396,9 +392,7 @@ async def test_get_top_topics_with_period() -> None:
         return_value=Response(200, json=mock_response)
     )
     respx.get(f"{BASE_URL}/categories.json").mock(
-        return_value=Response(
-            200, json={"category_list": {"categories": []}}
-        )
+        return_value=Response(200, json={"category_list": {"categories": []}})
     )
 
     await get_top_topics(period="yearly")
@@ -416,9 +410,7 @@ async def test_get_top_topics_invalid_period() -> None:
         return_value=Response(200, json=mock_response)
     )
     respx.get(f"{BASE_URL}/categories.json").mock(
-        return_value=Response(
-            200, json={"category_list": {"categories": []}}
-        )
+        return_value=Response(200, json={"category_list": {"categories": []}})
     )
 
     await get_top_topics(period="invalid")
